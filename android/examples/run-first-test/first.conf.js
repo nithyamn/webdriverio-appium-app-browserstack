@@ -10,7 +10,7 @@ exports.config = {
 
   capabilities: [{
     project: "First Webdriverio Android Project",
-    build: process.env.BROWSERSTACK_BUILD_NAME,
+    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Android',
     name: 'first_test',
     device: 'Google Pixel 3',
     os_version: "9.0",

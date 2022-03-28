@@ -10,20 +10,34 @@ exports.config = {
 
   maxInstances: 10,
   commonCapabilities: {
-    project: "First Webdriverio Android Project",
-    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Android',
+    project: "Webdriverio Android Project",
+    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Demo',
     name: 'parallel_test',
     app: process.env.BROWSERSTACK_APP_ID || 'bs://<hashed app-id>',
     'browserstack.debug': true
   },
 
   capabilities: [{
-    device: 'Google Pixel 3',
-    os_version: "9.0"
-  }, {
+    device: 'Google Pixel 5',
+    os_version: "12.0"
+  }, 
+  {
     device: 'Samsung Galaxy S10e',
     os_version: "9.0"
-  }],
+  },
+  {
+    device: 'OnePlus 9',
+    os_version: "11.0"
+  }
+  ],
+  afterTest: function (test, context, { error, result, duration, passed, retries }) {
+    if(passed) {
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"passed","reason": "Assertions passed"}}');
+    } else {
+      browser.takeScreenshot();
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"failed","reason": "At least 1 assertion failed"}}');
+    }
+  },
 
   logLevel: 'info',
   coloredLogs: true,

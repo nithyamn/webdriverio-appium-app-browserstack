@@ -9,14 +9,23 @@ exports.config = {
   exclude: [],
 
   capabilities: [{
-    project: "First Webdriverio Android Project",
-    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Android',
+    project: "Webdriverio Android Project",
+    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Demo',
     name: 'first_test',
-    device: 'Google Pixel 3',
-    os_version: "9.0",
+    device: 'Google Pixel 5',
+    os_version: "11.0",
     app: process.env.BROWSERSTACK_APP_ID || 'bs://<hashed app-id>',
     'browserstack.debug': true
   }],
+
+  afterTest: function (test, context, { error, result, duration, passed, retries }) {
+    if(passed) {
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"passed","reason": "Assertions passed"}}');
+    } else {
+      browser.takeScreenshot();
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"failed","reason": "At least 1 assertion failed"}}');
+    }
+  },
 
   logLevel: 'info',
   coloredLogs: true,

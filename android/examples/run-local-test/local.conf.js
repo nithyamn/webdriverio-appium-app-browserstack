@@ -11,8 +11,8 @@ exports.config = {
   exclude: [],
 
   capabilities: [{
-    project: "First Webdriverio Android Project",
-    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Android',
+    project: "Webdriverio Android Project",
+    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Demo',
     name: 'local_test',
     device: 'Google Pixel 3',
     os_version: "9.0",
@@ -33,6 +33,14 @@ exports.config = {
   mochaOpts: {
     ui: 'bdd',
     timeout: 20000
+  },
+  afterTest: function (test, context, { error, result, duration, passed, retries }) {
+    if(passed) {
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"passed","reason": "Assertions passed"}}');
+    } else {
+      browser.takeScreenshot();
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"failed","reason": "At least 1 assertion failed"}}');
+    }
   },
 
   // Code to start browserstack local before start of test

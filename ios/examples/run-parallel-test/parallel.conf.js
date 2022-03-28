@@ -10,8 +10,8 @@ exports.config = {
 
   maxInstances: 10,
   commonCapabilities: {
-    project: "First Webdriverio iOS Project",
-    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio iOS',
+    project: "Webdriverio iOS Project",
+    build: process.env.BROWSERSTACK_BUILD_NAME || 'Webdriverio Demo',
     name: 'parallel_test',
     app: process.env.BROWSERSTACK_APP_ID || 'bs://<hashed app-id>',
     'browserstack.debug': true
@@ -20,10 +20,23 @@ exports.config = {
   capabilities: [{
     device: "iPhone 11 Pro",
     os_version: "13"
-  }, {
-    device: "iPhone 11 Pro Max",
-    os_version: "13"
+  }, 
+  {
+    device: "iPhone XS",
+    os_version: "15"
+  },
+  {
+    device: "iPhone 8",
+    os_version: "12"
   }],
+  afterTest: function (test, context, { error, result, duration, passed, retries }) {
+    if(passed) {
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"passed","reason": "Assertions passed"}}');
+    } else {
+      browser.takeScreenshot();
+      browser.executeScript('browserstack_executor: {"action": "setSessionStatus", "arguments": {"status":"failed","reason": "At least 1 assertion failed"}}');
+    }
+  },
 
   logLevel: 'info',
   coloredLogs: true,
